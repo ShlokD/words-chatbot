@@ -1,11 +1,17 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const winston = require("winston");
+
 const app = express();
 const core = require("./app/core");
+const createLogger = require("./logger").createLogger
+
 const start = () => {
-  let matcher;
+  const logger = createLogger();
+  const matcher = core.createMatcher();
 
   app.use(bodyParser.json());
+  app.use(express.static("client/ui"));
 
   app.post("/get-words", (req, res) => {
     const sentence = req.body.sentence;
@@ -18,8 +24,7 @@ const start = () => {
   });
 
   app.listen(5050, () => {
-    matcher = core.createMatcher();
-    console.log("Server started at 5050");
+    logger.info("Server started at 5050");
   });
 };
 
